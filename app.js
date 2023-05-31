@@ -3,9 +3,6 @@ require("dotenv").config();
 const path = require("path");
 const fs = require("fs");
 
-let statuscode = 500;
-let fileBuffer = "";
-
 const routing = function (req, res) {
   let url = req.url;
   switch (url) {
@@ -22,54 +19,16 @@ const routing = function (req, res) {
 }
 
 const serveIndex = function (req, res) {
-  fs.readFile(
-    path.join(__dirname, "public", "index.html"),
-    function (err, buffer) {
-      if (err) {
-        statusCode = 404;
-        fileBuffer = "Looks like you're lost";
-      } else {
-        statuscode = 200;
-        fileBuffer = buffer;
-      }
-
-      res.setHeader("Content-Type", "text/html").writeHead(200).end(fileBuffer);
-    }
-  );
+  getPublicFile(path.join(__dirname, "public", "index.html"), req, res);
 };
 
 const servePageOne = function (req, res) {
-  fs.readFile(
-    path.join(__dirname, "public", "page1.html"),
-    function (err, buffer) {
-      if (err) {
-        statusCode = 404;
-        fileBuffer = "not found";
-      } else {
-        statuscode = 200;
-        fileBuffer = buffer;
-      }
+  getPublicFile(path.join(__dirname, "public", "page1.html"), req, res);
 
-      res.setHeader("Content-Type", "text/html").writeHead(200).end(fileBuffer);
-    }
-  );
 };
 
 const servePageTwo = function (req, res) {
-  fs.readFile(
-    path.join(__dirname, "public", "page2.html"),
-    function (err, buffer) {
-      if (err) {
-        statusCode = 404;
-        fileBuffer = "not found";
-      } else {
-        statuscode = 200;
-        fileBuffer = buffer;
-      }
-
-      res.setHeader("Content-Type", "text/html").writeHead(200).end(fileBuffer);
-    }
-  );
+  getPublicFile(path.join(__dirname, "public", "page2.html"), req, res);
 };
 
 const httpServer = http.createServer(routing);
@@ -77,3 +36,24 @@ const httpServer = http.createServer(routing);
 httpServer.listen(process.env.PORT || 3030, function () {
   console.log("server listen on port " + httpServer.address().port);
 });
+
+
+const getPublicFile = (path, req, res) => {
+  let response = {
+    statuscode: 500,
+    fileBuffer: ""
+  }
+  fs.readFile(
+    path.join(path),
+    (err, buffer) => {
+      if (err) {
+        response.statusCode = 404;
+        response.fileBuffer = "Not found";
+      } else {
+        response.statuscode = 200;
+        response.fileBuffer = buffer;
+      }
+      res.setHeader("Content-Type", "text/html").writeHead(response.statusCode).end(response.fileBuffer);
+    }
+  );
+}

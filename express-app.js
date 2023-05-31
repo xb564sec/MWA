@@ -3,61 +3,42 @@ require("dotenv").config();
 const path = require("path");
 const fs = require("fs");
 
-let statuscode = 500;
-let fileBuffer = "";
-
 const app = express();
 
 app.get("/", function (req, res) {
-  fs.readFile(
-    path.join(__dirname, "public", "index.html"),
-    function (err, buffer) {
-      if (err) {
-        statusCode = 404;
-        fileBuffer = "not found";
-      } else {
-        statuscode = 200;
-        fileBuffer = buffer;
-      }
-      res.setHeader("Content-Type", "text/html").writeHead(200).end(fileBuffer);
-    }
-  );
+  getPublicFile(path.join(__dirname, "public", "index.html"), req, res);
+
 });
 
 app.get("/page1", function (req, res) {
-  fs.readFile(
-    path.join(__dirname, "public", "page1.html"),
-    function (err, buffer) {
-      if (err) {
-        statusCode = 404;
-        fileBuffer = "not found";
-      } else {
-        statuscode = 200;
-        fileBuffer = buffer;
-      }
-
-      res.setHeader("Content-Type", "text/html").writeHead(200).end(fileBuffer);
-    }
-  );
+  getPublicFile(path.join(__dirname, "public", "page1.html"), req, res);
 });
 
 app.get("/page2", function (req, res) {
-  fs.readFile(
-    path.join(__dirname, "public", "page2.html"),
-    function (err, buffer) {
-      if (err) {
-        statusCode = 404;
-        fileBuffer = "Unfortunately we couldn't serve the file come back later.";
-      } else {
-        statuscode = 200;
-        fileBuffer = buffer;
-      }
-
-      res.setHeader("Content-Type", "text/html").writeHead(200).end(fileBuffer);
-    }
-  );
+  getPublicFile(path.join(__dirname, "public", "page2.html"), req, res);
 });
 
 const server = app.listen(process.env.PORT || 3030, function () {
   console.log("server listen on port " + server.address().port);
 });
+
+
+const getPublicFile = (path) => {
+  let response = {
+    statuscode: 500,
+    fileBuffer: ""
+  }
+  fs.readFile(
+    path.join(path),
+    (err, buffer) => {
+      if (err) {
+        response.statusCode = 404;
+        response.fileBuffer = "Not found";
+      } else {
+        response.statuscode = 200;
+        response.fileBuffer = buffer;
+      }
+      res.setHeader("Content-Type", "text/html").writeHead(response.statusCode).end(response.fileBuffer);
+    }
+  );
+}
