@@ -33,7 +33,7 @@ const servePageTwo = function (req, res) {
 
 const httpServer = http.createServer(routing);
 
-httpServer.listen(process.env.PORT || 3030, function () {
+httpServer.listen(process.env.HTTP_PORT || 3030, function () {
   console.log("server listen on port " + httpServer.address().port);
 });
 

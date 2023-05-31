@@ -18,7 +18,7 @@ app.get("/page2", function (req, res) {
   getPublicFile(path.join(__dirname, "public", "page2.html"), req, res);
 });
 
-const server = app.listen(process.env.PORT || 3030, function () {
+const server = app.listen(process.env.EXPRESS_PORT || 3030, function () {
   console.log("server listen on port " + server.address().port);
 });
 
